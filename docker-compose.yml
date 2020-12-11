@@ -14,6 +14,8 @@ services:
     image: phpmyadmin
     container_name: "nodokamome-db-phpmyadmin"  
     restart: always
+    volumes: 
+      - ./phpmyadmin/phpmyadmin-misc.ini:/usr/local/etc/php/conf.d/phpmyadmin-misc.ini
     ports:
       - 12000:80
     environment:
