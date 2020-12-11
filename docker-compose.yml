@@ -3,26 +3,33 @@ version: '3.5'
 services:
   db:
     image: mariadb:10.3
-    container_name: "nodokamome-db"  
+    container_name: "db"
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 1274518aAbBcC
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     networks: 
-      - nodokamome-network
+      - app-network
 
   phpmyadmin:
     image: phpmyadmin
-    container_name: "nodokamome-db-phpmyadmin"  
+    container_name: db-phpmyadmin
     restart: always
     volumes: 
       - ./phpmyadmin/phpmyadmin-misc.ini:/usr/local/etc/php/conf.d/phpmyadmin-misc.ini
-    ports:
-      - 12000:80
     environment:
+      - VIRTUAL_HOST=${VIRTUAL_HOST}
+      - VIRTUAL_PORT=${VIRTUAL_PORT}
+      - LETSENCRYPT_HOST=${LETSENCRYPT_HOST}
+      - LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}
+      - PMA_HOST=db
       - PMA_ARBITRARY=1
     networks: 
-      - nodokamome-network
+      - proxy-network  # プロキシネットワーク
+      - app-network    # アプリネットワーク
 
+# プロキシネットワーク、アプリネットワークと接続
 networks:
-  nodokamome-network:
-    name: nodokamome_network
+  proxy-network:
+    name: proxy_network
+  app-network:
+    name: app_network
